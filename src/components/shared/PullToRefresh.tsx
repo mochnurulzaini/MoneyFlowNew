@@ -1,22 +1,24 @@
 import { useState, useEffect, useRef } from 'react'
 import { RefreshCw } from 'lucide-react'
 
-const THRESHOLD = 80
+const THRESHOLD = 60
+const MAX_PULL = 90
 
 export default function PullToRefresh() {
   const [pullY, setPullY] = useState(0)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const startYRef = useRef(0)
+  const startXRef = useRef(0)
   const canPullRef = useRef(false)
   const pulledRef = useRef(false)
 
   useEffect(() => {
     const onTouchStart = (e: TouchEvent) => {
-      // Only allow PTR when at the very top
       const scrollable = document.querySelector('.page-scroll')
       const scrollTop = scrollable ? scrollable.scrollTop : window.scrollY
       if (scrollTop <= 0) {
         startYRef.current = e.touches[0].clientY
+        startXRef.current = e.touches[0].clientX
         canPullRef.current = true
         pulledRef.current = false
       } else {
@@ -26,17 +28,16 @@ export default function PullToRefresh() {
 
     const onTouchMove = (e: TouchEvent) => {
       if (!canPullRef.current || isRefreshing) return
+      const dx = e.touches[0].clientX - startXRef.current
       const dy = e.touches[0].clientY - startYRef.current
-      if (dy > 0) {
-        // Pull down — only prevent default once we confirm it's a pull gesture
-        if (dy > 8) {
+      if (dy > 0 && Math.abs(dy) > Math.abs(dx)) {
+        if (dy > 12) {
           e.preventDefault()
         }
-        const clamped = Math.min(dy * 0.45, 110)
+        const clamped = Math.min(dy * 0.35, MAX_PULL)
         setPullY(clamped)
         pulledRef.current = clamped >= THRESHOLD
       } else {
-        // Pulling up — reset
         canPullRef.current = false
         setPullY(0)
         pulledRef.current = false
@@ -78,7 +79,7 @@ export default function PullToRefresh() {
     <div
       className="ptr-container"
       style={{
-        top: `calc(env(safe-area-inset-top, 0px) + 64px + ${pullY * 0.5}px)`,
+        top: `calc(env(safe-area-inset-top, 0px) + 44px + ${pullY * 0.3}px)`,
         transition: pullY === 0 || isRefreshing ? 'all 0.3s ease' : 'none',
         opacity: Math.min(progress * 2, 1),
       }}

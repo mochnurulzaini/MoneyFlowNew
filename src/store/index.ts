@@ -19,22 +19,7 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: 'c12', name: 'Bonus',            icon: 'Gift',            color: '#ffb800', type: 'income'  },
 ]
 
-const now = new Date()
-const m = now.getMonth()
-const y = now.getFullYear()
-
-const DEFAULT_TRANSACTIONS: Transaction[] = [
-  { id: uid(), type: 'income',  amount: 8_000_000, categoryId: 'c9',  description: 'Gaji Bulan Ini',      date: new Date(y, m, 1).toISOString() },
-  { id: uid(), type: 'expense', amount: 150_000,   categoryId: 'c1',  description: 'Makan siang',          date: new Date(y, m, 2).toISOString() },
-  { id: uid(), type: 'expense', amount: 85_000,    categoryId: 'c2',  description: 'Bensin motor',         date: new Date(y, m, 3).toISOString() },
-  { id: uid(), type: 'expense', amount: 250_000,   categoryId: 'c4',  description: 'Belanja kebutuhan',    date: new Date(y, m, 4).toISOString() },
-  { id: uid(), type: 'income',  amount: 500_000,   categoryId: 'c10', description: 'Freelance desain',     date: new Date(y, m, 5).toISOString() },
-  { id: uid(), type: 'expense', amount: 300_000,   categoryId: 'c6',  description: 'Listrik & internet',   date: new Date(y, m, 6).toISOString() },
-  { id: uid(), type: 'expense', amount: 120_000,   categoryId: 'c1',  description: 'Makan malam bersama', date: new Date(y, m, 8).toISOString() },
-  { id: uid(), type: 'expense', amount: 75_000,    categoryId: 'c3',  description: 'Netflix',              date: new Date(y, m, 10).toISOString() },
-  { id: uid(), type: 'expense', amount: 200_000,   categoryId: 'c5',  description: 'Vitamin & suplemen',   date: new Date(y, m, 12).toISOString() },
-  { id: uid(), type: 'income',  amount: 1_500_000, categoryId: 'c12', description: 'Bonus proyek',         date: new Date(y, m, 15).toISOString() },
-]
+const DEFAULT_TRANSACTIONS: Transaction[] = []
 
 const DEFAULT_SETTINGS: AppSettings = {
   currency: 'IDR',

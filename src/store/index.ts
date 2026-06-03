@@ -34,6 +34,7 @@ interface AppStore {
   budgets: Budget[]
   savingsGoals: SavingsGoal[]
   settings: AppSettings
+  _version: number
 
   // Transactions
   addTransaction: (t: Omit<Transaction, 'id'>) => void
@@ -60,6 +61,8 @@ interface AppStore {
   resetAllData: () => void
 }
 
+const STORE_VERSION = 2  // Increment this to reset all user data
+
 // ─── Apply theme to DOM ───────────────────────────────────────
 function applyTheme(theme: Theme) {
   const root = document.documentElement
@@ -82,6 +85,7 @@ export const useAppStore = create<AppStore>()(
       budgets: [],
       savingsGoals: [],
       settings: DEFAULT_SETTINGS,
+      _version: STORE_VERSION,
 
       // Transactions
       addTransaction: (t) => set(s => ({ transactions: [{ ...t, id: uid() }, ...s.transactions] })),
@@ -125,11 +129,27 @@ export const useAppStore = create<AppStore>()(
         budgets: [],
         savingsGoals: [],
         settings: DEFAULT_SETTINGS,
+        _version: STORE_VERSION,
       }),
     }),
     {
       name: 'moneyflow-data',
       storage: createJSONStorage(() => localStorage),
+      version: STORE_VERSION,
+      migrate: (persistedState: any, version: number) => {
+        // Jika version lama, reset ke default baru
+        if (version < STORE_VERSION) {
+          return {
+            transactions: DEFAULT_TRANSACTIONS,
+            categories: DEFAULT_CATEGORIES,
+            budgets: [],
+            savingsGoals: [],
+            settings: DEFAULT_SETTINGS,
+            _version: STORE_VERSION,
+          } as any
+        }
+        return persistedState as any
+      },
       onRehydrateStorage: () => (state) => {
         if (state?.settings?.theme) {
           applyTheme(state.settings.theme)
